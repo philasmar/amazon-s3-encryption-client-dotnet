@@ -36,6 +36,10 @@ jobs:
       - run: dotnet tool update -g docfx --version 2.78.4
       - run: docfx docs/docfx.json
       
+      - name: Add base tag for subdirectory deployment
+        run: |
+          find docs/_site -name "*.html" -type f -exec sed -i 's|<head>|<head>\n    <base href="/amazon-s3-encryption-client-dotnet/">|' {} +
+      
       - name: Create .nojekyll file
         run: touch docs/_site/.nojekyll
 
