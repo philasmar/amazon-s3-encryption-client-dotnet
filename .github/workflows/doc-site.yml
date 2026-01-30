@@ -38,7 +38,7 @@ jobs:
       
       - name: Add base tag for subdirectory deployment
         run: |
-          find docs/_site -name "*.html" -type f -exec sed -i 's|<head>|<head>\n    <base href="/amazon-s3-encryption-client-dotnet/">|' {} +
+          find docs/_site -name "*.html" -type f -exec sed -i 's|<head[^>]*>|&\n    <base href="/${{ github.event.repository.name }}/">|' {} +
       
       - name: Create .nojekyll file
         run: touch docs/_site/.nojekyll
