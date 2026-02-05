@@ -1,10 +1,11 @@
 name: Generate Documentation and API Reference
 
-# Trigger the action on push to main
+# Trigger the action on push to main or manual workflow dispatch
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -35,11 +36,18 @@ jobs:
 
       - run: dotnet tool update -g docfx --version 2.78.4
       - run: docfx docs/docfx.json
+      
+      - name: Add base tag for subdirectory deployment
+        run: |
+          find docs/_site -name "*.html" -type f -exec sed -i 's|<head[^>]*>|&\n    <base href="/${{ github.event.repository.name }}/">|' {} +
+      
+      - name: Create .nojekyll file
+        run: touch docs/_site/.nojekyll
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b #v4.0.0
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa #v3.0.1
         with:
-          # Upload entire repository
+          # Upload docs site
           path: "docs/_site"
       - name: Deploy to GitHub Pages
         id: deployment
